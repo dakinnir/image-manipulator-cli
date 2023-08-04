@@ -2,6 +2,7 @@
 import yargs from "yargs/yargs";
 import { hideBin } from "yargs/helpers";
 import chalk from "chalk";
+import boxen from 'boxen';
 import sharp from "sharp";
 
 // yargs options
@@ -19,12 +20,13 @@ const options = yargs(hideBin(process.argv))
  * @returns {void}
  */
 function editImage() {
+  
   const argv = yargs(hideBin(process.argv)).argv;
-
   const file = argv._[0];
+  // get filename from argument & remove extension
   const path = file.split(".")[0].split("/");
   const filename = path[path.length - 1];
-console.log(argv)
+
   console.log(`${chalk.yellow(`\nEditting`)} - ${process.cwd()}/${file}`)
   if (!argv.r || !argv.s) {
     console.log(chalk.red("Please provide size and flip options"));
@@ -34,14 +36,11 @@ console.log(argv)
       sharp(`${process.cwd()}/${file}`)
       .resize(argv.s, argv.s)
       .rotate(argv.f? 180 : 0)
-      .toFile(`${process.cwd()}/test/new-${filename}-${Math.round(Math.random() * 1000)}.jpg`, (err) => {  
-        if (err) throw err;
-        process.exit(0);
-      })
+      .toFile(`${process.cwd()}/test/new-${filename}-${Math.round(Math.random() * 1000)}.jpg`)
       console.log(
-        chalk.green(
+        boxen(chalk.green(
           `Image resized to ${argv.s}x${argv.s}`
-        )
+        ), {padding: 1, borderColor: "green", borderStyle: "round"})
       )
   }
   catch (error) {
